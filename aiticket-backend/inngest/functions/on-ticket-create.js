@@ -12,11 +12,10 @@ import {
 import analyzeTicket from "../../utils/ai.js";
 
 export const onTicketCreated = inngest.createFunction({
-        name: "Process New Ticket", // Added descriptive name
-        id: "process-new-ticket",   // Changed to be more consistent
+        id: "on-ticket-created",
         retries: 2
     }, {
-        event: "ticket/created"     // This must exactly match the event name you send
+        event: "ticket/created"
     },
     async ({
         event,
