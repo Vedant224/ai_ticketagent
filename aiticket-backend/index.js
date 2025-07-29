@@ -39,14 +39,14 @@ app.use(
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("MongoDB connected");
-    app.listen(PORT, () => console.log("Server at http://localhost:3000"));
+    app.listen(PORT);
   })
-  .catch((err) => console.error("MongoDB error: ", err));
+  .catch((err) => {
+    throw new Error(`MongoDB connection error: ${err.message}`);
+  });
 
 // Error-handling middleware (should be after all routes)
 app.use((err, req, res, next) => {
-  console.error('Express error:', err);
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
