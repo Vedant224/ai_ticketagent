@@ -22,23 +22,74 @@ export const onTicketCreated = inngest.createFunction({
         step
     }) => {
         try {
+            // Initial logging
+            await step.run("function-start", async () => {
+                return {
+                    message: "Starting ticket processing",
+                    timestamp: new Date().toISOString()
+                };
+            });
+
             const {
                 ticketId
             } = event.data;
-            const ticket = await step.run("fetch-ticket", async () => {
+            
+            // Log the incoming event data
+            await step.run("log-event", async () => {
+                return { 
+                    phase: "event-received",
+                    ticketId, 
+                    eventData: event.data,
+                    timestamp: new Date().toISOString()
+                };
+            });
+
+            // MongoDB connection check
+            await step.run("check-db-connection", async () => {
+                return {
+                    phase: "db-connection",
+                    connected: Ticket.db.readyState === 1,
+                    timestamp: new Date().toISOString()
+                };
+            });
+
+            const ticketData = await step.run("fetch-ticket", async () => {
                 const ticketObject = await Ticket.findById(ticketId)
                 if (!ticketObject) {
                     throw new NonRetriableError("Ticket not found");
                 }
-                return ticketObject;
+                return {
+                    phase: "ticket-fetched",
+                    ticket: ticketObject,
+                    timestamp: new Date().toISOString()
+                };
             })
+            const ticket = ticketData.ticket;
+            
             await step.run("update-ticket-status", async () => {
                 await Ticket.findByIdAndUpdate(ticket._id, {
                     status: "TODO"
                 })
             })
+            await step.run("pre-ai-check", async () => {
+                return {
+                    phase: "pre-ai",
+                    geminiKey: !!process.env.GEMINI_API_KEY,
+                    timestamp: new Date().toISOString()
+                };
+            });
+
             const aiResponse = await analyzeTicket(ticket)
-            JSON.stringify(aiResponse);
+            const aiResponseString = JSON.stringify(aiResponse);
+            
+            await step.run("log-ai-response", async () => {
+                return {
+                    phase: "ai-response",
+                    response: aiResponseString,
+                    timestamp: new Date().toISOString()
+                };
+            });
+            
             const relatedSkills = await step.run("ai-processing", async () => {
                 let skills = []
                 if (aiResponse) {
@@ -96,9 +147,31 @@ export const onTicketCreated = inngest.createFunction({
             }
 
         } catch (error) {
+            // Enhanced error logging
+            const errorDetails = {
+                message: error.message,
+                stack: error.stack,
+                phase: error.step || 'unknown',
+                ticketId: event.data?.ticketId,
+                timestamp: new Date().toISOString()
+            };
+
+            // Log the error in a step for better visibility in Inngest dashboard
+            await step.run("error-logging", async () => {
+                return errorDetails;
+            });
+
+            // For database connection errors, we want to retry
+            if (error.message.includes('connecting to db') || 
+                error.name === 'MongoNetworkError' ||
+                error.name === 'MongoTimeoutError') {
+                throw error; // This will trigger a retry
+            }
+
+            // For other errors, return failure
             return {
                 success: false,
-                error: error.message
+                error: errorDetails
             }
         }
 
