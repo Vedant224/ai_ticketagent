@@ -96,9 +96,9 @@ export const onTicketCreated = inngest.createFunction({
             }
 
         } catch (error) {
-            console.log("Error running the ticket step", error.message);
             return {
-                success: false
+                success: false,
+                error: error.message
             }
         }
 

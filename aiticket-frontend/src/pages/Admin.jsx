@@ -161,7 +161,7 @@ export default function AdminPanel() {
                 </div>
               ) : (
                 <button
-                  className="btn bg-slate-200 font-bold btn-sm text-zinc-800 btn-sm mt-2"
+                  className="btn bg-slate-200 font-bold btn-sm text-zinc-800 mt-2"
                   onClick={() => handleEditClick(user)}
                 >
                   Edit

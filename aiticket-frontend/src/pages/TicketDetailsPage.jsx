@@ -8,7 +8,6 @@ export default function TicketDetailsPage() {
   const [loading, setLoading] = useState(true);
     const fetchTicket = async () => {
       const token = localStorage.getItem("token");
-      console.log("Fetching A ticket TOKEN, token:", token);
       try {
         const res = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/tickets/get-ticket/${id}`,
@@ -17,9 +16,7 @@ export default function TicketDetailsPage() {
               method: "GET",
           }
         );
-        console.log("Fetch tick status:", res.status);
         const data = await res.json();
-        console.log(data);
         if (res.ok) {
           setTicket(data.ticket);
         } else {

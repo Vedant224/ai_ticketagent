@@ -25,7 +25,6 @@ export const onUserSignup = inngest.createFunction(
             `;
         try {
             await sendMail(user.email,subject,message)
-            console.log("Email send successfully");
         } catch (error) {
             console.error("Error in sendMail for", user.email, err);
             throw new ApiError(500,"Something wrong with mailtrap.io");

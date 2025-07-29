@@ -8,7 +8,6 @@ export default function Tickets() {
 
   const token = localStorage.getItem("token");
   const fetchTickets = async () => {
-    console.log("Fetching tickets, token:", token);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/tickets/get-tickets`,
@@ -17,9 +16,7 @@ export default function Tickets() {
           method: "GET",
         }
       );
-      console.log("Fetch status:", res.status);
       const data = await res.json();
-      console.log("Fetch data:", data);
       setTickets(data);
     } catch (err) {
       console.error("Failed to fetch tickets:", err);
