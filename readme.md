@@ -1,3 +1,10 @@
+## Images
+<img width="1842" height="936" alt="Screenshot 2026-02-02 172908" src="https://github.com/user-attachments/assets/16516f1b-a667-41e5-ac90-12c5f7dd68cb" />
+<img width="1840" height="934" alt="Screenshot 2026-02-02 172942" src="https://github.com/user-attachments/assets/b2886725-8a67-4b99-84c4-522401a9a168" />
+<img width="1834" height="925" alt="Screenshot 2026-02-02 173027" src="https://github.com/user-attachments/assets/a19a51ea-9c76-4b71-915e-7d961c58fa94" />
+<img width="1836" height="929" alt="Screenshot 2026-02-02 170714" src="https://github.com/user-attachments/assets/926f5fb0-6ef7-436a-b89b-9e36867ac5c1" />
+
+
 ## Key Features
 
 - **AI-Powered Ticket Processing:**
